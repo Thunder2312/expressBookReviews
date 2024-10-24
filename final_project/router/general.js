@@ -5,12 +5,6 @@ let users = require("./auth_users.js").users;
 const public_users = express.Router();
 let map = new Map();
 
-const filteredBooks = Object.values(books).map(book => ({
-  author: book.author,
-  title: book.title,
-  reviews: book.reviews
-}));
-
 public_users.post("/register", (req,res) => {
   const username = req.body.username;
   const password = req.body.password;
@@ -29,7 +23,7 @@ public_users.post("/register", (req,res) => {
 // Get the book list available in the shop
 public_users.get('/', function (req, res) {
   const promise = new Promise((resolve) => {
-    resolve(filteredBooks); // Resolve with the filtered books
+    resolve(books); 
   });
 
   promise
@@ -41,7 +35,6 @@ public_users.get('/', function (req, res) {
     });
 });
 
-// Get book details based on ISBN
 public_users.get('/isbn/:isbn', function (req, res) {
   const key = Number(req.params.isbn);
   const promise = new Promise((resolve) => {
@@ -58,16 +51,21 @@ public_users.get('/isbn/:isbn', function (req, res) {
       resolve(null); // Resolve with null if the book does not exist
     }
   });
+  
   promise
     .then(bookDetails => {
       if (bookDetails) {
-        res.send(`Author: ${bookDetails.author}, Title: ${bookDetails.title}, Reviews: ${JSON.stringify(bookDetails.reviews)}`);
+        res.json({
+          author: bookDetails.author,
+          title: bookDetails.title,
+          reviews: bookDetails.reviews,
+        });
       } else {
-        res.status(404).send(`The ISBN does not exist.`);
+        res.status(404).json({ message: `The ISBN does not exist.` });
       }
     })
     .catch(error => {
-      res.status(500).send(`An error occurred: ${error.message}`);
+      res.status(500).json({ message: `An error occurred: ${error.message}` });
     });
 });
 

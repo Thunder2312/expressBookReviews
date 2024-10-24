@@ -83,12 +83,12 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
         // Modify the existing review
         const reviewId = existingReview[0]; // Get the review ID
         book.reviews[reviewId].review = review; // Update the review content
-        return res.status(200).json({ message: "Review updated successfully.", reviews: book.reviews });
+        return res.status(200).json({ message: `The review for the book with the ISBN ${isbn} has been updated.`, reviews: book.reviews });
     } else {
         // Add a new review
         const reviewId = uuidv4(); // Generate a new unique ID
         book.reviews[reviewId] = { username, review };
-        return res.status(200).json({ message: "Review added successfully.", reviews: book.reviews });
+        return res.status(200).json({ message: `The review for the book with the ISBN ${isbn} has been added.`, reviews: book.reviews });
     }
 });
 
@@ -147,7 +147,7 @@ regd_users.delete("/auth/review/:isbn/:reviewId" , (req,res)=>{
     }
     // Delete the review
     delete book.reviews[reviewId];
-    return res.status(200).json({ message: "Review deleted successfully.", reviews: book.reviews });
+    return res.status(200).json({ message: `Review for the ISBN ${isbn} deleted successfully.`, reviews: book.reviews });
 })
 
 module.exports.authenticated = regd_users;
